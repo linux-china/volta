@@ -9,6 +9,8 @@ use crate::session::{ActivityKind, Session};
 
 /// Build a `ToolCommand` for Node
 pub(super) fn command(args: &[OsString], session: &mut Session) -> Fallible<Executor> {
+    // load .env file
+    dotenvx_rs::dotenv().ok();
     session.add_event_start(ActivityKind::Node);
     // Don't re-evaluate the platform if this is a recursive call
     let platform = match env::var_os(RECURSION_ENV_VAR) {
