@@ -15,24 +15,20 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@v4
-      - name: Set up docker buildx
-        uses: docker/setup-buildx-action@v3
-      - name: Build docker image
-        uses: docker/build-push-action@v3
+      - name: Install cross-rs
+        uses: taiki-e/install-action@v2
         with:
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-          context: ./ci/docker
-          push: false
-          load: true
-          tags: volta
-      - name: Compile and package Volta
-        run: docker run --volume ${PWD}:/root/workspace --workdir /root/workspace --rm --init --tty volta /root/workspace/ci/build-linux.sh volta-linux
+          tool: cross
+      - name: Compile Volta
+        run: cross build --release --target x86_64-unknown-linux-gnu
+      - name: Package Volta
+        run: |
+          cd target/x86_64-unknown-linux-gnu/release && tar -zcvf "volta-linux-x64.tar.gz" volta volta-shim volta-migrate
       - name: Upload release artifact
         uses: actions/upload-artifact@v4
         with:
-          name: linux
-          path: target/release/volta-linux.tar.gz
+          name: linux-arm
+          path: target/x86_64-unknown-linux-gnu/release/volta-linux-x64.tar.gz
 
   linux-arm:
     name: Build - Linux ARM
@@ -56,7 +52,7 @@ jobs:
           path: target/aarch64-unknown-linux-gnu/release/volta-linux-arm.tar.gz
 
   macos:
-    name: Build - MacOS
+    name: Build - MacOS X64
     runs-on: macos-13
     steps:
       - name: Check out code
@@ -74,7 +70,7 @@ jobs:
           path: target/universal-apple-darwin/release/volta-macos.tar.gz
 
   macos-arm:
-    name: Build - MacOS
+    name: Build - MacOS Arm
     runs-on: macos-15
     steps:
       - name: Check out code
