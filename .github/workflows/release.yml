@@ -10,7 +10,7 @@ name: Production
 
 jobs:
   linux:
-    name: Build - Linux
+    name: Build - Linux x64
     runs-on: ubuntu-latest
     steps:
       - name: Check out code
@@ -27,7 +27,7 @@ jobs:
       - name: Upload release artifact
         uses: actions/upload-artifact@v4
         with:
-          name: linux-arm
+          name: linux-x64
           path: target/x86_64-unknown-linux-gnu/release/volta-linux-x64.tar.gz
 
   linux-arm:
@@ -52,41 +52,46 @@ jobs:
           path: target/aarch64-unknown-linux-gnu/release/volta-linux-arm.tar.gz
 
   macos:
-    name: Build - MacOS X64
-    runs-on: macos-13
+    name: Build - MacOS x64
+    runs-on: ubuntu-latest
     steps:
       - name: Check out code
         uses: actions/checkout@v4
-      - name: Set up cargo
-        uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Install cross-rs
+        uses: taiki-e/install-action@v2
         with:
-          target: x86_64-apple-darwin
-      - name: Compile and package Volta
-        run: ./ci/build-macos.sh volta-macos
+          tool: cross
+      - name: Compile Volta
+        run: cross build --release --target x86_64-apple-darwin
+      - name: Package Volta
+        run: |
+          cd target/x86_64-apple-darwin/release && tar -zcvf "volta-mac-x64.tar.gz" volta volta-shim volta-migrate
       - name: Upload release artifact
         uses: actions/upload-artifact@v4
         with:
-          name: macos
-          path: target/universal-apple-darwin/release/volta-macos.tar.gz
+          name: macos-x64
+          path: target/x86_64-apple-darwin/release/volta-mac-x64.tar.gz
 
   macos-arm:
     name: Build - MacOS Arm
-    runs-on: macos-15
+    runs-on: ubuntu-latest
     steps:
       - name: Check out code
         uses: actions/checkout@v4
-      - name: Set up cargo
-        uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Install cross-rs
+        uses: taiki-e/install-action@v2
         with:
-          target: aarch64-apple-darwin
-      - name: Compile and package Volta
-        run: ./ci/build-macos.sh volta-macos
+          tool: cross
+      - name: Compile Volta
+        run: cross build --release --target aarch64-apple-darwin
+      - name: Package Volta
+        run: |
+          cd target/aarch64-apple-darwin/release && tar -zcvf "volta-mac-arm64.tar.gz" volta volta-shim volta-migrate
       - name: Upload release artifact
         uses: actions/upload-artifact@v4
         with:
-          name: macos
-          path: target/universal-apple-darwin/release/volta-macos-aarch64.tar.gz
-
+          name: macos-arm64
+          path: target/aarch64-apple-darwin/release/volta-mac-arm64.tar.gz
 
   windows:
     name: Build - Windows
@@ -154,6 +159,7 @@ jobs:
       - linux
       - linux-arm
       - macos
+      - macos-arm
       - windows
       - windows-arm
     if: github.event_name == 'push'
@@ -179,6 +185,11 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: macos
+          path: release
+      - name: Fetch MacOS arm artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: macos-arm
           path: release
       - name: Fetch Windows installer
         uses: actions/download-artifact@v4
@@ -237,6 +248,15 @@ jobs:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: ./release/volta-macos.tar.gz
           asset_name: volta-${{ steps.release_info.outputs.version }}-macos.tar.gz
+          asset_content_type: application/gzip
+      - name: Upload MacOS arm artifact
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./release/volta-macos.tar.gz
+          asset_name: volta-${{ steps.release_info.outputs.version }}-macos-arm.tar.gz
           asset_content_type: application/gzip
       - name: Upload Windows installer
         uses: actions/upload-release-asset@v1
