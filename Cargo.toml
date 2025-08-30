@@ -55,3 +55,5 @@ cfg-if = "1.0.3"
 test-support = { path = "crates/test-support" }
 
 [workspace]
+members = [".", "crates/*"]
+resolver = "3"
