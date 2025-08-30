@@ -23,16 +23,16 @@ jobs:
         run: cross build --release --target x86_64-unknown-linux-gnu
       - name: Package Volta
         run: |
-          cd target/x86_64-unknown-linux-gnu/release && tar -zcvf "volta-linux-x64.tar.gz" volta volta-shim volta-migrate
+          cd target/x86_64-unknown-linux-gnu/release && tar -zcvf "volta-linux-x86_64.tar.gz" volta volta-shim volta-migrate
       - name: Upload release artifact
         uses: actions/upload-artifact@v4
         with:
-          name: linux-x64
-          path: target/x86_64-unknown-linux-gnu/release/volta-linux-x64.tar.gz
+          name: linux
+          path: target/x86_64-unknown-linux-gnu/release/volta-linux-x86_64.tar.gz
 
   linux-arm:
     name: Build - Linux ARM
-    runs-on: ubuntu-22.04-arm
+    runs-on: ubuntu-latest
     steps:
       - name: Check out code
         uses: actions/checkout@v4
@@ -44,12 +44,12 @@ jobs:
         run: cross build --release --target aarch64-unknown-linux-gnu
       - name: Package Volta
         run: |
-          cd target/aarch64-unknown-linux-gnu/release && tar -zcvf "volta-linux-arm.tar.gz" volta volta-shim volta-migrate
+          cd target/aarch64-unknown-linux-gnu/release && tar -zcvf "volta-linux-arm64.tar.gz" volta volta-shim volta-migrate
       - name: Upload release artifact
         uses: actions/upload-artifact@v4
         with:
           name: linux-arm
-          path: target/aarch64-unknown-linux-gnu/release/volta-linux-arm.tar.gz
+          path: target/aarch64-unknown-linux-gnu/release/volta-linux-arm64.tar.gz
 
   macos:
     name: Build - MacOS x64
@@ -65,12 +65,12 @@ jobs:
         run: cross build --release --target x86_64-apple-darwin
       - name: Package Volta
         run: |
-          cd target/x86_64-apple-darwin/release && tar -zcvf "volta-mac-x64.tar.gz" volta volta-shim volta-migrate
+          cd target/x86_64-apple-darwin/release && tar -zcvf "volta-mac-x86_64.tar.gz" volta volta-shim volta-migrate
       - name: Upload release artifact
         uses: actions/upload-artifact@v4
         with:
           name: macos
-          path: target/x86_64-apple-darwin/release/volta-mac-x64.tar.gz
+          path: target/x86_64-apple-darwin/release/volta-mac-x86_64.tar.gz
 
   macos-arm:
     name: Build - MacOS Arm
@@ -228,8 +228,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./release/volta-linux.tar.gz
-          asset_name: volta-${{ steps.release_info.outputs.version }}-linux.tar.gz
+          asset_path: ./release/volta-linux-x86_64.tar.gz
+          asset_name: volta-${{ steps.release_info.outputs.version }}-linux-x86_64.tar.gz
           asset_content_type: application/gzip
       - name: Upload Linux ARM artifact
         uses: actions/upload-release-asset@v1
@@ -237,8 +237,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./release/volta-linux-arm.tar.gz
-          asset_name: volta-${{ steps.release_info.outputs.version }}-linux-arm.tar.gz
+          asset_path: ./release/volta-linux-arm64.tar.gz
+          asset_name: volta-${{ steps.release_info.outputs.version }}-linux-arm64.tar.gz
           asset_content_type: application/gzip
       - name: Upload MacOS artifact
         uses: actions/upload-release-asset@v1
@@ -246,8 +246,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./release/volta-macos.tar.gz
-          asset_name: volta-${{ steps.release_info.outputs.version }}-macos.tar.gz
+          asset_path: ./release/volta-macos-x86_64.tar.gz
+          asset_name: volta-${{ steps.release_info.outputs.version }}-macos-x86_64.tar.gz
           asset_content_type: application/gzip
       - name: Upload MacOS arm artifact
         uses: actions/upload-release-asset@v1
@@ -255,8 +255,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./release/volta-macos.tar.gz
-          asset_name: volta-${{ steps.release_info.outputs.version }}-macos-arm.tar.gz
+          asset_path: ./release/volta-macos-arm64.tar.gz
+          asset_name: volta-${{ steps.release_info.outputs.version }}-macos-arm64.tar.gz
           asset_content_type: application/gzip
       - name: Upload Windows installer
         uses: actions/upload-release-asset@v1
