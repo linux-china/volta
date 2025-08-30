@@ -21,33 +21,37 @@ name = "volta-migrate"
 path = "src/volta-migrate.rs"
 
 [profile.release]
-lto = "fat"
+strip = true
+lto = true
+opt-level = "z"
 codegen-units = 1
+panic = "abort"
+
 
 [dependencies]
 volta-core = { path = "crates/volta-core" }
-serde = { version = "1.0", features = ["derive"] }
-serde_json = "1.0.135"
-once_cell = "1.19.0"
-log = { version = "0.4", features = ["std"] }
-node-semver = "2"
-clap = { version = "4.5.24", features = ["color", "derive", "wrap_help"] }
-clap_complete = "4.5.46"
-mockito = { version = "0.31.1", optional = true }
-textwrap = "0.16.1"
-which = "7.0.1"
+serde = { version = "1.0.219", features = ["derive"] }
+serde_json = "1.0.143"
+once_cell = "1.21.3"
+log = { version = "0.4.27", features = ["std"] }
+node-semver = "2.2.0"
+clap = { version = "4.5.46", features = ["color", "derive", "wrap_help"] }
+clap_complete = "4.5.57"
+mockito = { version = "1.7.0", optional = true }
+textwrap = "0.16.2"
+which = "8.0.0"
 dirs = "6.0.0"
 volta-migrate = { path = "crates/volta-migrate" }
 
 [target.'cfg(windows)'.dependencies]
-winreg = "0.53.0"
+winreg = "0.55.0"
 
 [dev-dependencies]
 hamcrest2 = "0.3.0"
 envoy = "0.1.3"
 ci_info = "0.14.14"
-headers = "0.4"
-cfg-if = "1.0"
+headers = "0.4.1"
+cfg-if = "1.0.3"
 test-support = { path = "crates/test-support" }
 
 [workspace]
