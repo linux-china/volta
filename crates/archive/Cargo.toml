@@ -15,7 +15,7 @@ zip_rs = { version = "=4.5.0", package = "zip", default-features = false, featur
 tee = "0.1.0"
 fs-utils = { path = "../fs-utils" }
 progress-read = { path = "../progress-read" }
-verbatim = "0.1"
+verbatim = "0.1.1"
 cfg-if = "1.0.3"
 headers = "0.4.1"
 thiserror = "2.0.16"
