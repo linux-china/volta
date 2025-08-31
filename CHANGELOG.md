@@ -13,4 +13,5 @@
 ## [2.0.2-dotenvx20250830] - 2025-08-30
 
 ### Added
+
 - Add dotenvx support
