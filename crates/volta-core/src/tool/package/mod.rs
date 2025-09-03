@@ -165,9 +165,21 @@ impl DirectInstall {
             manager,
         } = self;
 
-        let name = name
-            .or_else(|| manager.get_installed_package(staging.path().to_owned()))
-            .ok_or(ErrorKind::InstalledPackageNameError)?;
+        let mut package_name = name.or_else(|| manager.get_installed_package(staging.path().to_owned()));
+        if package_name.is_none() {
+            // extract package name(last arg) from args
+            let args: Vec<String> = std::env::args().collect();
+            if let Some(last_item) = args.last() {
+                let mut name_arg = last_item.as_str();
+                if let Some(pos) = last_item.rfind('@') {
+                    if pos != 0 {
+                        name_arg = &last_item[..pos];
+                    }
+                }
+                package_name = Some(name_arg.to_string());
+            }
+        }
+        let name = package_name.ok_or(ErrorKind::InstalledPackageNameError)?;
         let manifest = configure::parse_manifest(&name, staging.path().to_owned(), manager)?;
 
         persist_install(&name, &manifest.version, staging.path())?;
