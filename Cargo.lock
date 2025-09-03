@@ -865,9 +865,9 @@ dependencies = [
 
 [[package]]
 name = "dotenvx-rs"
-version = "0.4.14"
+version = "0.4.15"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5ad7e5c44c2e9100344208f82464332fffd5d2dfda43a0f8724813c5d22137d3"
+checksum = "54bae17c71d7dcce98a9b0c6ec558c155839e759e30bb92f5edb9e9c2096b22e"
 dependencies = [
  "aes-gcm",
  "anyhow",
@@ -876,6 +876,7 @@ dependencies = [
  "base64ct",
  "chrono",
  "clap",
+ "clap_complete",
  "colored",
  "colored_json",
  "csv",
