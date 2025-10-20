@@ -43,6 +43,7 @@ which = "8.0.0"
 dirs = "6.0.0"
 volta-migrate = { path = "crates/volta-migrate" }
 clap_mangen = "0.2.30"
+rustls = { version = "0.23.33", default-features = false, features = ["ring", "logging", "tls12"] }
 
 [target.'cfg(windows)'.dependencies]
 winreg = "0.55.0"
