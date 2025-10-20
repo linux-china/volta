@@ -2,6 +2,13 @@
 
 # Task Keeper Changelog
 
+## [2.0.2-dotenvx20251020] - 2025-10-20
+
+### Updated
+
+- Update to Rust edition 2024
+- Update crates
+
 ## [2.0.2-dotenvx20250903] - 2025-09-03
 
 ### Updated
