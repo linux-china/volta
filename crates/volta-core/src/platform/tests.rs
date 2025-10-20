@@ -42,7 +42,9 @@ fn test_image_path() {
     #[cfg(windows)]
     let path_delimiter = ";";
     let path = build_test_path();
-    std::env::set_var("PATH", &path);
+    unsafe {
+        std::env::set_var("PATH", &path);
+    }
 
     let node_bin = volta_home().unwrap().node_image_bin_dir("1.2.3");
     let expected_node_bin = node_bin.to_str().unwrap();
@@ -148,8 +150,9 @@ fn test_image_path() {
 
 fn test_system_path() {
     let path = build_test_path();
-    std::env::set_var("PATH", path);
-
+    unsafe {
+        std::env::set_var("PATH", path);
+    }
     #[cfg(unix)]
     let expected_path = String::from("/usr/bin:/bin");
     #[cfg(windows)]
