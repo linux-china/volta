@@ -2,7 +2,7 @@
 name = "validate-npm-package-name"
 version = "0.1.0"
 authors = ["Chris Krycho <hello@chriskrycho.com>"]
-edition = "2021"
+edition = "2024"
 
 [lib]
 
