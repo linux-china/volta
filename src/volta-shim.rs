@@ -8,6 +8,7 @@ use volta_core::session::{ActivityKind, Session};
 use volta_core::signal::setup_signal_handler;
 
 pub fn main() {
+    rustls::crypto::ring::default_provider().install_default().expect("Failed to install rustls crypto provider");
     Logger::init(LogContext::Shim, LogVerbosity::Default)
         .expect("Only a single Logger should be initialized");
     setup_signal_handler();

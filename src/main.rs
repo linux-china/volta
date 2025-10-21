@@ -13,6 +13,7 @@ use common::{ensure_layout, Error};
 
 /// The entry point for the `volta` CLI.
 pub fn main() {
+    rustls::crypto::ring::default_provider().install_default().expect("Failed to install rustls crypto provider");
     let volta = cli::Volta::parse();
     let verbosity = match (&volta.verbose, &volta.quiet) {
         (false, false) => LogVerbosity::Default,
