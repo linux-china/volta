@@ -7,7 +7,7 @@ edition = "2024"
 [dependencies]
 volta-core = { path = "../volta-core" }
 volta-layout = { path = "../volta-layout" }
-log = { version = "0.4.28", features = ["std"] }
+log = { version = "0.4.29", features = ["std"] }
 tempfile = "3.23.0"
 node-semver = "2.2.0"
 serde_json = { version = "1.0.145", features = ["preserve_order"] }
