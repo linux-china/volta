@@ -32,21 +32,21 @@ panic = "abort"
 volta-core = { path = "crates/volta-core" }
 serde = { version = "1.0.228", features = ["derive"] }
 serde_json = "1.0.149"
-once_cell = "1.21.3"
+once_cell = "1.21.4"
 log = { version = "0.4.29", features = ["std"] }
 node-semver = "2.2.0"
-clap = { version = "4.5.58", features = ["color", "derive", "wrap_help"] }
-clap_complete = "4.5.65"
+clap = { version = "4.6.0", features = ["color", "derive", "wrap_help"] }
+clap_complete = "4.6.0"
 mockito = { version = "1.7.2", optional = true }
 textwrap = "0.16.2"
-which = "8.0.0"
+which = "8.0.2"
 dirs = "6.0.0"
 volta-migrate = { path = "crates/volta-migrate" }
-clap_mangen = "0.2.31"
-rustls = { version = "0.23.36", default-features = false, features = ["ring", "logging", "tls12"] }
+clap_mangen = "0.2.33"
+rustls = { version = "0.23.37", default-features = false, features = ["ring", "logging", "tls12"] }
 
 [target.'cfg(windows)'.dependencies]
-winreg = "0.55.0"
+winreg = "0.56.0"
 
 [dev-dependencies]
 hamcrest2 = "0.3.0"
