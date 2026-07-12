@@ -41,7 +41,7 @@ enum MigrationState {
     V1(Box<V1>),
     V2(Box<V2>),
     V3(Box<V3>),
-    V4(Box<V4>),
+    V4(#[allow(dead_code)]Box<V4>),
 }
 
 /// Macro to simplify the boilerplate associated with detecting a tagged state.
