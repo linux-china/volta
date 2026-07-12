@@ -11,6 +11,7 @@ pub struct LegacyPackageConfig {
     #[serde(with = "version_serde")]
     pub version: Version,
     pub platform: LegacyPlatform,
+    #[allow(dead_code)]
     pub bins: Vec<String>,
 }
 

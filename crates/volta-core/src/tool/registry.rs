@@ -105,6 +105,7 @@ pub struct PackageIndex {
 /// https://github.com/npm/registry/blob/master/docs/REGISTRY-API.md
 #[derive(Deserialize, Debug)]
 pub struct RawPackageMetadata {
+    #[allow(dead_code)]
     pub name: String,
     pub versions: HashMap<String, RawPackageVersionInfo>,
     #[serde(
@@ -119,9 +120,11 @@ pub struct RawPackageVersionInfo {
     // there's a lot more in there, but right now just care about the version
     #[serde(with = "version_serde")]
     pub version: Version,
+    #[allow(dead_code)]
     pub dist: RawDistInfo,
 }
 
+#[allow(dead_code)]
 #[derive(Deserialize, Clone, Debug)]
 pub struct RawDistInfo {
     pub shasum: String,
