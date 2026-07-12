@@ -15,7 +15,7 @@ cross-platform-docs = []
 [dependencies]
 terminal_size = "0.4.4"
 indicatif = "0.18.4"
-console = "0.16.3"
+console = "0.16.4"
 readext = "0.1.0"
 serde_json = { version = "1.0.150", features = ["preserve_order"] }
 serde = { version = "1.0.228", features = ["derive"] }
@@ -29,7 +29,7 @@ os_info = "3.15.0"
 detect-indent = "0.1.0"
 envoy = "0.1.3"
 mockito = { version = "1.7.2", optional = true }
-regex = "1.12.3"
+regex = "1.13.0"
 dirs = "6.0.0"
 # We manually configure the feature list here because 0.4.16 includes the
 # `oldtime` feature by default to avoid a breaking change. Additionally, using
@@ -38,7 +38,7 @@ dirs = "6.0.0"
 chrono = { version = "0.4.45", default-features = false, features = ["alloc", "std", "clock"] }
 validate-npm-package-name = { path = "../validate-npm-package-name" }
 textwrap = "0.16.2"
-log = { version = "0.4.32", features = ["std"] }
+log = { version = "0.4.33", features = ["std"] }
 ctrlc = "3.5.2"
 walkdir = "2.5.0"
 volta-layout = { path = "../volta-layout" }
