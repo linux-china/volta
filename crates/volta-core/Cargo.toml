@@ -14,11 +14,11 @@ cross-platform-docs = []
 
 [dependencies]
 terminal_size = "0.4.4"
-indicatif = "0.18.4"
+indicatif = "0.18.6"
 console = "0.16.4"
 readext = "0.1.0"
-serde_json = { version = "1.0.150", features = ["preserve_order"] }
-serde = { version = "1.0.228", features = ["derive"] }
+serde_json = { version = "1.0.151", features = ["preserve_order"] }
+serde = { version = "1.0.229", features = ["derive"] }
 archive = { path = "../archive" }
 node-semver = "2.2.0"
 cmdline_words_parser = "0.2.1"
