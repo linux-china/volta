@@ -40,10 +40,20 @@ binary.
 Read the [Getting Started Guide](https://docs.volta.sh/guide/getting-started) on our website for detailed instructions
 on how to install Volta.
 
+```shell
+curl https://raw.githubusercontent.com/linux-china/volta/refs/heads/main/get-volta.sh | bash
+```
+
 ## Using Volta
 
 Read the [Understanding Volta Guide](https://docs.volta.sh/guide/understanding) on our website for detailed instructions
 on how to use Volta.
+
+```shell
+volta install node@22
+volta install npm
+volta install yarn
+```
 
 ## Contributing to Volta
 
