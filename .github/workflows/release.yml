@@ -53,7 +53,7 @@ jobs:
 
   macos:
     name: Build - MacOS x64
-    runs-on: macos-13
+    runs-on: macos-15-intel
     steps:
       - name: Check out code
         uses: actions/checkout@v4
