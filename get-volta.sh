@@ -8,12 +8,12 @@
 # NOTE: to use an internal company repo, change how this determines the latest version
 get_latest_release() {
   # curl --silent "https://volta.sh/latest-version"
-  curl -s https://api.github.com/repos/andreassjoberg/volta/releases/latest | jq -r .tag_name | sed 's/^v//'
+  curl -s https://api.github.com/repos/linux-china/volta/releases/latest | jq -r .tag_name | sed 's/^v//'
 }
 
 release_url() {
   # echo "https://github.com/volta-cli/volta/releases"
-  echo "https://github.com/andreassjoberg/volta/releases"
+  echo "https://github.com/linux-china/volta/releases"
 }
 
 download_release_from_repo() {
