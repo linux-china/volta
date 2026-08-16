@@ -34,6 +34,7 @@ binary.
 - Support for multiple package managers
 - Stable tool installation—no reinstalling on every Node upgrade!
 - Extensibility hooks for site-specific customization
+- .env file auto-detection
 
 ## Installing Volta
 
