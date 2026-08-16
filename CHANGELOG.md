@@ -2,6 +2,13 @@
 
 # Task Keeper Changelog
 
+## [2.0.2-20260816] - 2026-08-16
+
+### Updated
+
+- Update crates
+- Fix install in `get-volta.sh`
+
 ## [2.0.2-dotenvx20251020] - 2025-10-20
 
 ### Updated
