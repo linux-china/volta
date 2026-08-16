@@ -20,8 +20,9 @@ download_release_from_repo() {
   local version="$1"
   local os_info="$2"
   local tmpdir="$3"
+  local arch_info="$(uname -m)"
 
-  local filename="volta-$version-$os_info.tar.gz"
+  local filename="volta-$version-$os_info-$arch_info.tar.gz"
   local download_file="$tmpdir/$filename"
   local archive_url="$(release_url)/download/v$version/$filename"
 
