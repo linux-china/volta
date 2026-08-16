@@ -1,0 +1,9 @@
+(function() {
+    const implementors = Object.fromEntries([["volta_core",[["impl <a class=\"trait\" href=\"https://doc.rust-lang.org/1.97.1/core/default/trait.Default.html\" title=\"trait core::default::Default\">Default</a> for <a class=\"enum\" href=\"volta_core/version/enum.VersionSpec.html\" title=\"enum volta_core::version::VersionSpec\">VersionSpec</a>",0],["impl <a class=\"trait\" href=\"https://doc.rust-lang.org/1.97.1/core/default/trait.Default.html\" title=\"trait core::default::Default\">Default</a> for <a class=\"struct\" href=\"volta_core/project/serial/struct.ToolchainSpec.html\" title=\"struct volta_core::project::serial::ToolchainSpec\">ToolchainSpec</a>",0],["impl&lt;T&gt; <a class=\"trait\" href=\"https://doc.rust-lang.org/1.97.1/core/default/trait.Default.html\" title=\"trait core::default::Default\">Default</a> for <a class=\"enum\" href=\"volta_core/platform/enum.InheritOption.html\" title=\"enum volta_core::platform::InheritOption\">InheritOption</a>&lt;T&gt;",0]]]]);
+    if (window.register_implementors) {
+        window.register_implementors(implementors);
+    } else {
+        window.pending_implementors = implementors;
+    }
+})()
+//{"start":59,"fragment_lengths":[942]}
