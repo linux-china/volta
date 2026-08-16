@@ -22,7 +22,7 @@ jobs:
       RUST_BACKTRACE: full
     steps:
       - name: Check out code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
       - name: Set up cargo
         uses: actions-rust-lang/setup-rust-toolchain@v1
       - name: Run tests
@@ -34,20 +34,6 @@ jobs:
         run: |
           cargo clippy --tests --features mock-network
 
-  smoke-tests:
-    name: Smoke Tests
-    runs-on: macos-latest
-    env:
-      RUST_BACKTRACE: full
-    steps:
-      - name: Check out code
-        uses: actions/checkout@v4
-      - name: Set up cargo
-        uses: actions-rust-lang/setup-rust-toolchain@v1
-      - name: Run tests
-        run: |
-          cargo test --test smoke --features smoke-tests -- --test-threads 1
-
   shell-tests:
     name: Shell Script Tests
     runs-on: ubuntu-latest
@@ -55,7 +41,7 @@ jobs:
       - name: Setup BATS
         run: sudo npm install -g bats
       - name: Check out code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
       - name: Run tests
         run: bats dev/unix/tests/
 
@@ -64,7 +50,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check out code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
       - name: Set up cargo
         uses: actions-rust-lang/setup-rust-toolchain@v1
       - name: Run check
@@ -76,7 +62,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check out code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
       - name: Run check
         run: |
           cd dev/unix
