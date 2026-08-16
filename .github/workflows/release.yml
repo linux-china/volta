@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check out code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
       - name: Install cross-rs
         uses: taiki-e/install-action@v2
         with:
@@ -25,7 +25,7 @@ jobs:
         run: |
           cd target/x86_64-unknown-linux-gnu/release && tar -zcvf "volta-linux-x86_64.tar.gz" volta volta-shim volta-migrate
       - name: Upload release artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: linux-x64
           path: target/x86_64-unknown-linux-gnu/release/volta-linux-x86_64.tar.gz
@@ -35,7 +35,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check out code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
       - name: Install cross-rs
         uses: taiki-e/install-action@v2
         with:
@@ -46,7 +46,7 @@ jobs:
         run: |
           cd target/aarch64-unknown-linux-gnu/release && tar -zcvf "volta-linux-arm64.tar.gz" volta volta-shim volta-migrate
       - name: Upload release artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: linux-arm64
           path: target/aarch64-unknown-linux-gnu/release/volta-linux-arm64.tar.gz
@@ -56,7 +56,7 @@ jobs:
     runs-on: macos-15-intel
     steps:
       - name: Check out code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
       - name: Install cross-rs
         uses: taiki-e/install-action@v2
         with:
@@ -67,7 +67,7 @@ jobs:
         run: |
           cd target/x86_64-apple-darwin/release && tar -zcvf "volta-macos-x86_64.tar.gz" volta volta-shim volta-migrate
       - name: Upload release artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: macos-x64
           path: target/x86_64-apple-darwin/release/volta-macos-x86_64.tar.gz
@@ -77,7 +77,7 @@ jobs:
     runs-on: macos-15
     steps:
       - name: Check out code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
       - name: Install cross-rs
         uses: taiki-e/install-action@v2
         with:
@@ -88,7 +88,7 @@ jobs:
         run: |
           cd target/aarch64-apple-darwin/release && tar -zcvf "volta-macos-arm64.tar.gz" volta volta-shim volta-migrate
       - name: Upload release artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: macos-arm64
           path: target/aarch64-apple-darwin/release/volta-macos-arm64.tar.gz
@@ -98,7 +98,7 @@ jobs:
     runs-on: windows-latest
     steps:
       - name: Check out code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
       - name: Set up cargo
         uses: actions-rust-lang/setup-rust-toolchain@v1
         with:
@@ -112,12 +112,12 @@ jobs:
         run: powershell Compress-Archive volta*.exe volta-windows.zip
         working-directory: ./target/release
       - name: Upload installer
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: windows-installer
           path: target/wix/volta-windows.msi
       - name: Upload zip
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: windows-zip
           path: target/release/volta-windows.zip
@@ -127,7 +127,7 @@ jobs:
     runs-on: windows-latest
     steps:
       - name: Check out code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
       - name: Set up cargo
         uses: actions-rust-lang/setup-rust-toolchain@v1
         with:
@@ -142,12 +142,12 @@ jobs:
         run: powershell Compress-Archive volta*.exe volta-windows-arm.zip
         working-directory: ./target/aarch64-pc-windows-msvc/release
       - name: Upload installer
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: windows-installer-arm
           path: target/wix/volta-windows-arm.msi
       - name: Upload zip
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: windows-zip-arm
           path: target/aarch64-pc-windows-msvc/release/volta-windows-arm.zip
@@ -165,49 +165,49 @@ jobs:
     if: github.event_name == 'push'
     steps:
       - name: Check out code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
       - name: Determine release version
         id: release_info
         env:
           TAG: ${{ github.ref }}
         run: echo "version=${TAG:11}" >> $GITHUB_OUTPUT
       - name: Fetch Linux artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: linux-x64
           path: release
       - name: Fetch Linux ARM artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: linux-arm64
           path: release
       - name: Fetch MacOS artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: macos-x64
           path: release
       - name: Fetch MacOS arm artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: macos-arm64
           path: release
       - name: Fetch Windows installer
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: windows-installer
           path: release
       - name: Fetch Windows zip
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: windows-zip
           path: release
       - name: Fetch Windows ARM installer
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: windows-installer-arm
           path: release
       - name: Fetch Windows ARM zip
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: windows-zip-arm
           path: release
