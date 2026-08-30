@@ -38,7 +38,7 @@ dirs = "6.0.0"
 chrono = { version = "0.4.45", default-features = false, features = ["alloc", "std", "clock"] }
 validate-npm-package-name = { path = "../validate-npm-package-name" }
 textwrap = "0.16.2"
-log = { version = "0.4.33", features = ["std"] }
+log = { version = "0.4.34", features = ["std"] }
 ctrlc = "3.5.2"
 walkdir = "2.5.0"
 volta-layout = { path = "../volta-layout" }
@@ -49,11 +49,11 @@ httpdate = "1.0.3"
 headers = "0.4.1"
 attohttpc = { version = "0.31.0", default-features = false, features = ["json", "compress", "tls-rustls-native-roots"] }
 chain-map = "0.1.0"
-indexmap = "2.14.0"
+indexmap = "2.14.1"
 retry = "2.2.0"
 fs2 = "0.4.3"
-which = "8.0.5"
-dotenvx-rs = "0.4.31"
+which = "8.0.6"
+dotenvx-rs = "0.4.32"
 
 [target.'cfg(windows)'.dependencies]
 winreg = "0.56.0"
