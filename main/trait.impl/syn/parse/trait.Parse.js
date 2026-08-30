@@ -1,0 +1,9 @@
+(function() {
+    const implementors = Object.fromEntries([["volta_layout_macro",[["impl <a class=\"trait\" href=\"https://docs.rs/syn/1.0.109/syn/parse/trait.Parse.html\" title=\"trait syn::parse::Parse\">Parse</a> for <a class=\"struct\" href=\"volta_layout_macro/ast/struct.Ast.html\" title=\"struct volta_layout_macro::ast::Ast\">Ast</a>",0],["impl <a class=\"trait\" href=\"https://docs.rs/syn/1.0.109/syn/parse/trait.Parse.html\" title=\"trait syn::parse::Parse\">Parse</a> for <a class=\"struct\" href=\"volta_layout_macro/ast/struct.Directory.html\" title=\"struct volta_layout_macro::ast::Directory\">Directory</a>",0],["impl <a class=\"trait\" href=\"https://docs.rs/syn/1.0.109/syn/parse/trait.Parse.html\" title=\"trait syn::parse::Parse\">Parse</a> for <a class=\"enum\" href=\"volta_layout_macro/ast/enum.FieldContents.html\" title=\"enum volta_layout_macro::ast::FieldContents\">FieldContents</a>",0],["impl <a class=\"trait\" href=\"https://docs.rs/syn/1.0.109/syn/parse/trait.Parse.html\" title=\"trait syn::parse::Parse\">Parse</a> for <a class=\"struct\" href=\"volta_layout_macro/ast/struct.FieldPrefix.html\" title=\"struct volta_layout_macro::ast::FieldPrefix\">FieldPrefix</a>",0],["impl <a class=\"trait\" href=\"https://docs.rs/syn/1.0.109/syn/parse/trait.Parse.html\" title=\"trait syn::parse::Parse\">Parse</a> for <a class=\"struct\" href=\"volta_layout_macro/ast/struct.LayoutStruct.html\" title=\"struct volta_layout_macro::ast::LayoutStruct\">LayoutStruct</a>",0]]]]);
+    if (window.register_implementors) {
+        window.register_implementors(implementors);
+    } else {
+        window.pending_implementors = implementors;
+    }
+})()
+//{"start":59,"fragment_lengths":[1437]}
