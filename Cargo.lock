@@ -4937,7 +4937,7 @@ dependencies = [
  "console",
  "ctrlc",
  "detect-indent",
- "dirs 6.0.0",
+ "dirs 7.0.0",
  "dotenvx-rs",
  "dunce",
  "envoy",
