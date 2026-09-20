@@ -112,9 +112,12 @@ impl Parse for Directory {
     fn parse(input: ParseStream) -> parse::Result<Self> {
         let content;
         braced!(content in input);
-        Ok(Directory {
-            entries: content.parse_terminated(FieldPrefix::parse)?,
-        })
+        let mut entries = Punctuated::new();
+        while !content.is_empty() {
+            entries.push_value(content.parse()?);
+            entries.push_punct(content.parse()?);
+        }
+        Ok(Directory { entries })
     }
 }
 
