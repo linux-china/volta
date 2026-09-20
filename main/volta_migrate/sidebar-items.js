@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["MigrationState"],"fn":["detect_and_migrate","run_migration"],"macro":[["detect_tagged",1]],"mod":["detect","empty","v0","v1","v2","v3","v4"]};
