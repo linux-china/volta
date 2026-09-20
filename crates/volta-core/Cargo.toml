@@ -23,7 +23,7 @@ archive = { path = "../archive" }
 node-semver = "2.2.0"
 cmdline_words_parser = "0.2.1"
 fs-utils = { path = "../fs-utils" }
-cfg-if = "1.0.4"
+cfg-if = "1.0.5"
 tempfile = "3.27.0"
 os_info = "3.15.0"
 detect-indent = "0.1.0"
@@ -37,7 +37,7 @@ dirs = "6.0.0"
 # not need.
 chrono = { version = "0.4.45", default-features = false, features = ["alloc", "std", "clock"] }
 validate-npm-package-name = { path = "../validate-npm-package-name" }
-textwrap = "0.16.2"
+textwrap = "0.16.4"
 log = { version = "0.4.34", features = ["std"] }
 ctrlc = "3.5.2"
 walkdir = "2.5.0"
@@ -49,11 +49,11 @@ httpdate = "1.0.3"
 headers = "0.4.1"
 attohttpc = { version = "0.31.0", default-features = false, features = ["json", "compress", "tls-rustls-native-roots"] }
 chain-map = "0.1.0"
-indexmap = "2.14.1"
+indexmap = "2.14.2"
 retry = "2.2.0"
 fs2 = "0.4.3"
 which = "8.0.6"
-dotenvx-rs = "0.4.32"
+dotenvx-rs = "0.4.33"
 
 [target.'cfg(windows)'.dependencies]
 winreg = "0.56.0"

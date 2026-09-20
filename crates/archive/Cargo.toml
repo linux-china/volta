@@ -5,7 +5,7 @@ authors = ["David Herman <david.herman@gmail.com>"]
 edition = "2024"
 
 [dependencies]
-flate2 = "1.1.9"
+flate2 = "1.1.10"
 tar = "0.4.46"
 # Set features manually to drop usage of `time` crate: we do not rely on that
 # set of capabilities, and it has a vulnerability. We also don't need to use
@@ -16,7 +16,7 @@ tee = "0.1.0"
 fs-utils = { path = "../fs-utils" }
 progress-read = { path = "../progress-read" }
 verbatim = "0.1.1"
-cfg-if = "1.0.4"
+cfg-if = "1.0.5"
 headers = "0.4.1"
 thiserror = "2.0.20"
 attohttpc = { version = "0.31.0", default-features = false, features = ["json", "compress", "tls-rustls-native-roots", "tls-rustls-native-roots-ring"] }
