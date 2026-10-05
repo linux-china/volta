@@ -17,7 +17,7 @@ fs-utils = { path = "../fs-utils" }
 progress-read = { path = "../progress-read" }
 verbatim = "0.1.1"
 cfg-if = "1.0.5"
-headers = "0.4.1"
-thiserror = "2.0.20"
+headers = "0.4.2"
+thiserror = "2.0.21"
 attohttpc = { version = "0.31.0", default-features = false, features = ["json", "compress", "tls-rustls-native-roots", "tls-rustls-native-roots-ring"] }
 log = { version = "0.4.34", features = ["std"] }
