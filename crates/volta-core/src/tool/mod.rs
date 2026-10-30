@@ -29,6 +29,15 @@ pub use pnpm::Pnpm;
 pub use registry::PackageDetails;
 pub use yarn::Yarn;
 
+/// Base URL of the mock server the acceptance sandbox runs for the binary under test.
+///
+/// The server lives in the test process, so its address has to arrive through the environment.
+#[cfg(feature = "mock-network")]
+fn mock_server_url() -> String {
+    env::var("VOLTA_TEST_SERVER_URL")
+        .expect("VOLTA_TEST_SERVER_URL is set by the acceptance sandbox")
+}
+
 fn debug_already_fetched<T: Display>(tool: T) {
     debug!("{} has already been fetched, skipping download", tool);
 }

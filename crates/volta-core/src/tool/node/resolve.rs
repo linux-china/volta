@@ -25,13 +25,10 @@ use node_semver::{Range, Version};
 // ISSUE (#86): Move public repository URLs to config file
 cfg_if! {
     if #[cfg(feature = "mock-network")] {
-        // TODO: We need to reconsider our mocking strategy in light of mockito deprecating the
-        // SERVER_URL constant: Since our acceptance tests run the binary in a separate process,
-        // we can't use `mockito::server_url()`, which relies on shared memory.
-        #[allow(deprecated)]
-        const SERVER_URL: &str = mockito::SERVER_URL;
+        use crate::tool::mock_server_url;
+
         fn public_node_version_index() -> String {
-            format!("{}/node-dist/index.json", SERVER_URL)
+            format!("{}/node-dist/index.json", mock_server_url())
         }
     } else {
         /// Returns the URL of the index of available Node versions on the public Node server.

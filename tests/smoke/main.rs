@@ -10,9 +10,11 @@
 // Also note that each test uses a different version of node and yarn. This is to prevent
 // false positives if the tests are not cleaned up correctly. Any new tests should use
 // different versions of node and yarn.
+//
+// These tests need the real network, so they are compiled out under `mock-network`.
 
 cfg_if::cfg_if! {
-    if #[cfg(all(unix, feature = "smoke-tests"))] {
+    if #[cfg(all(unix, feature = "smoke-tests", not(feature = "mock-network")))] {
         mod autodownload;
         mod direct_install;
         mod direct_upgrade;

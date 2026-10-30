@@ -7,7 +7,7 @@ use std::time::{Duration, SystemTime};
 
 use cfg_if::cfg_if;
 use headers::{Expires, Header};
-use mockito::{self, mock, Matcher};
+use mockito::{Matcher, Mock, Server, ServerGuard};
 use node_semver::Version;
 use test_support::{self, ok_or_panic, paths, paths::PathExt, process::ProcessBuilder};
 use volta_core::fs::{set_executable, symlink_file};
@@ -305,7 +305,7 @@ impl SandboxBuilder {
         SandboxBuilder {
             root: Sandbox {
                 root,
-                mocks: vec![],
+                server: Server::new(),
                 env_vars: vec![],
                 env_vars_remove: vec![],
                 path: OsString::new(),
@@ -320,6 +320,11 @@ impl SandboxBuilder {
             ],
             has_exec_path: false,
         }
+    }
+
+    /// Base URL of the sandbox's mock server, for building hooks that point at it
+    pub fn server_url(&self) -> String {
+        self.root.server.url()
     }
 
     #[allow(dead_code)]
@@ -368,68 +373,76 @@ impl SandboxBuilder {
 
     /// Setup mock to return the available node versions (chainable)
     pub fn node_available_versions(mut self, body: &str) -> Self {
-        let mock = mock("GET", "/node-dist/index.json")
+        self.root
+            .server
+            .mock("GET", "/node-dist/index.json")
             .with_status(200)
             .with_header("content-type", "application/json")
             .with_body(body)
             .create();
-        self.root.mocks.push(mock);
 
         self
     }
 
     /// Setup mock to return the available Yarn@1 versions (chainable)
     pub fn yarn_1_available_versions(mut self, body: &str) -> Self {
-        let mock = mock("GET", "/yarn")
+        self.root
+            .server
+            .mock("GET", "/yarn")
             .with_status(200)
             .with_header("content-type", "application/json")
             .with_body(body)
             .create();
-        self.root.mocks.push(mock);
         self
     }
 
     /// Setup mock to return the available Yarn@2+ versions (chainable)
     pub fn yarn_berry_available_versions(mut self, body: &str) -> Self {
-        let mock = mock("GET", "/@yarnpkg/cli-dist")
+        self.root
+            .server
+            .mock("GET", "/@yarnpkg/cli-dist")
             .with_status(200)
             .with_header("content-type", "application/json")
             .with_body(body)
             .create();
-        self.root.mocks.push(mock);
         self
     }
 
     /// Setup mock to return the available npm versions (chainable)
     pub fn npm_available_versions(mut self, body: &str) -> Self {
-        let mock = mock("GET", "/npm")
+        self.root
+            .server
+            .mock("GET", "/npm")
             .with_status(200)
             .with_header("content-type", "application/json")
             .with_body(body)
             .create();
-        self.root.mocks.push(mock);
 
         self
     }
 
     /// Setup mock to return the available pnpm versions (chainable)
     pub fn pnpm_available_versions(mut self, body: &str) -> Self {
-        let mock = mock("GET", "/pnpm")
+        self.root
+            .server
+            .mock("GET", "/pnpm")
             .with_status(200)
             .with_header("content-type", "application/json")
             .with_body(body)
             .create();
-        self.root.mocks.push(mock);
 
         self
     }
 
     /// Setup mock to return a 404 for any GET request
-    /// Note: Mocks are matched in reverse order, so any created _after_ this will work
-    ///       While those created before will not
+    /// Note: Mocks are matched in definition order, so any created _before_ this will work
+    ///       While those created after will not
     pub fn mock_not_found(mut self) -> Self {
-        let mock = mock("GET", Matcher::Any).with_status(404).create();
-        self.root.mocks.push(mock);
+        self.root
+            .server
+            .mock("GET", Matcher::Any)
+            .with_status(404)
+            .create();
         self
     }
 
@@ -450,19 +463,21 @@ impl SandboxBuilder {
                 (uncompressed_size & 0x0000_00ff) as u8,
             ];
 
-            let range_mock = mock("GET", &server_path[..])
+            self.root
+                .server
+                .mock("GET", &server_path[..])
                 .match_header("Range", Matcher::Any)
                 .with_body(uncompressed_size_bytes)
                 .create();
-            self.root.mocks.push(range_mock);
         }
 
-        let file_mock = mock("GET", &server_path[..])
+        self.root
+            .server
+            .mock("GET", &server_path[..])
             .match_header("Range", Matcher::Missing)
             .with_header("Accept-Ranges", "bytes")
             .with_body_from_file(fixture_path)
             .create();
-        self.root.mocks.push(file_mock);
 
         self
     }
@@ -830,7 +845,7 @@ fn sandbox_path(path: &str) -> PathBuf {
 
 pub struct Sandbox {
     root: PathBuf,
-    mocks: Vec<mockito::Mock>,
+    server: ServerGuard,
     env_vars: Vec<EnvVar>,
     env_vars_remove: Vec<String>,
     path: OsString,
@@ -840,6 +855,11 @@ impl Sandbox {
     /// Root of the project, ex: `/path/to/cargo/target/integration_test/t0/foo`
     pub fn root(&self) -> PathBuf {
         self.root.clone()
+    }
+
+    /// Add a mock to the sandbox's server after the sandbox has been built.
+    pub fn mock(&mut self, method: &str, path: &str) -> Mock {
+        self.server.mock(method, path)
     }
 
     /// Create a `ProcessBuilder` to run a program in the project.
@@ -856,6 +876,7 @@ impl Sandbox {
             .env("VOLTA_INSTALL_DIR", cargo_dir())
             .env("PATH", &self.path)
             .env("VOLTA_POSTSCRIPT", volta_postscript())
+            .env("VOLTA_TEST_SERVER_URL", self.server.url())
             .env_remove("VOLTA_SHELL")
             .env_remove("MSYSTEM"); // assume cmd.exe everywhere on windows
 

@@ -1,3 +1,5 @@
+use std::sync::{Mutex, MutexGuard};
+
 use crate::support::sandbox::sandbox;
 use ci_info::types::{CiInfo, Vendor};
 use hamcrest2::assert_that;
@@ -14,12 +16,22 @@ const NODE_VERSION_INFO: &str = r#"[
 ]
 "#;
 
+// `mock_ci` writes to the environment of the test process, which spawned binaries then inherit.
+static CI_ENV: Mutex<()> = Mutex::new(());
+
+/// Applies a CI mock and holds it until the guard is dropped, so parallel tests can't replace it.
+fn mock_ci(info: &CiInfo) -> MutexGuard<'static, ()> {
+    let guard = CI_ENV.lock().expect("lock poisoned");
+    ci_info::mock_ci(info);
+    guard
+}
+
 #[test]
 fn no_cause_shown_if_no_verbose_flag() {
     let s = sandbox().node_available_versions(NODE_VERSION_INFO).build();
 
     // Mock `is_ci` to false so that this works even when running in Volta's CI Test Suite
-    ci_info::mock_ci(&CiInfo::new());
+    let _ci = mock_ci(&CiInfo::new());
 
     assert_that!(
         s.volta("install node@10"),
@@ -34,7 +46,7 @@ fn cause_shown_if_verbose_flag() {
     let s = sandbox().node_available_versions(NODE_VERSION_INFO).build();
 
     // Mock `is_ci` to false so that this correctly tests the verbose flag
-    ci_info::mock_ci(&CiInfo::new());
+    let _ci = mock_ci(&CiInfo::new());
 
     assert_that!(
         s.volta("install node@10 --verbose"),
@@ -61,7 +73,7 @@ fn error_log_if_underlying_cause() {
     let s = sandbox().node_available_versions(NODE_VERSION_INFO).build();
 
     // Mock `is_ci` to false so that this works even when running Volta's CI Test Suite
-    ci_info::mock_ci(&CiInfo::new());
+    let _ci = mock_ci(&CiInfo::new());
 
     assert_that!(
         s.volta("install node@10"),
@@ -102,7 +114,7 @@ fn cause_shown_in_ci() {
     let mut ci_mock = CiInfo::new();
     ci_mock.vendor = Some(Vendor::GitHubActions);
     ci_mock.ci = true;
-    ci_info::mock_ci(&ci_mock);
+    let _ci = mock_ci(&ci_mock);
 
     assert_that!(
         s.volta("install node@10"),
@@ -120,7 +132,7 @@ fn no_error_log_in_ci() {
     let mut ci_mock = CiInfo::new();
     ci_mock.vendor = Some(Vendor::GitHubActions);
     ci_mock.ci = true;
-    ci_info::mock_ci(&ci_mock);
+    let _ci = mock_ci(&ci_mock);
 
     assert_that!(
         s.volta("install node@10"),

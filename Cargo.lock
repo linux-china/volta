@@ -3778,7 +3778,6 @@ dependencies = [
  "indicatif",
  "junction",
  "log",
- "mockito",
  "node-semver",
  "once_cell",
  "os_info",
