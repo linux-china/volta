@@ -120,11 +120,22 @@ mod platform {
 
     pub fn entry_to_shim_name((entry, metadata): (DirEntry, Metadata)) -> Option<String> {
         if metadata.file_type().is_symlink() {
-            entry
-                .path()
-                .file_stem()
-                .and_then(OsStr::to_str)
-                .map(ToOwned::to_owned)
+            #[cfg(unix)]
+            {
+                entry
+                    .path()
+                    .file_name()
+                    .and_then(OsStr::to_str)
+                    .map(ToOwned::to_owned)
+            }
+            #[cfg(windows)]
+            {
+                entry
+                    .path()
+                    .file_stem()
+                    .and_then(OsStr::to_str)
+                    .map(ToOwned::to_owned)
+            }
         } else {
             None
         }
@@ -193,5 +204,22 @@ volta run "$(basename $0)" "$@""#;
         remove_file_if_exists(script_path).with_context(|| ErrorKind::ShimRemoveError {
             name: shim_name.to_string(),
         })
+    }
+}
+
+#[cfg(all(test, unix))]
+mod tests {
+    use super::get_shim_list_deduped;
+    use std::os::unix::fs::symlink;
+
+    #[test]
+    fn shim_list_keeps_full_name_of_dotted_shims() {
+        let dir = tempfile::tempdir().unwrap();
+        symlink("volta-shim", dir.path().join("foo.js")).unwrap();
+
+        let shims = get_shim_list_deduped(dir.path()).unwrap();
+
+        assert!(shims.contains("foo.js"));
+        assert!(!shims.contains("foo"));
     }
 }
