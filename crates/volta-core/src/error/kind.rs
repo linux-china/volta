@@ -422,6 +422,12 @@ pub enum ErrorKind {
         from_url: String,
     },
 
+    /// Thrown when a package tries to install a binary with a name reserved by Volta
+    ReservedBinName {
+        bin_name: String,
+        package: String,
+    },
+
     /// Thrown when the shim binary is called directly, not through a symlink
     RunShimDirectly,
 
@@ -1273,6 +1279,13 @@ from {}
 Please verify your internet connection.",
                 tool, from_url
             ),
+            ErrorKind::ReservedBinName { bin_name, package } => write!(
+                f,
+                "Could not install {}: executable '{}' is reserved by Volta.
+
+Packages cannot replace Volta's own commands, so this package cannot be installed globally.",
+                package, bin_name
+            ),
             ErrorKind::RunShimDirectly => write!(
                 f,
                 "'volta-shim' should not be called directly.
@@ -1573,6 +1586,7 @@ impl ErrorKind {
             #[cfg(windows)]
             ErrorKind::ReadUserPathError => ExitCode::EnvironmentError,
             ErrorKind::RegistryFetchError { .. } => ExitCode::NetworkError,
+            ErrorKind::ReservedBinName { .. } => ExitCode::InvalidArguments,
             ErrorKind::RunShimDirectly => ExitCode::InvalidArguments,
             ErrorKind::SetupToolImageError { .. } => ExitCode::FileSystemError,
             ErrorKind::SetToolExecutable { .. } => ExitCode::FileSystemError,

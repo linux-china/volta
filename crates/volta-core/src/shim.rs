@@ -13,6 +13,32 @@ use log::debug;
 
 pub use platform::create;
 
+/// Executable names owned by Volta itself, which packages are not allowed to take over
+const RESERVED_BINS: &[&str] = &[
+    "node",
+    "npm",
+    "npx",
+    "pnpm",
+    "yarn",
+    "yarnpkg",
+    "volta",
+    "volta-shim",
+    "volta-migrate",
+];
+
+/// Determine whether a bin name belongs to Volta rather than to the given package
+///
+/// Names are compared case-insensitively, since a shim named `Yarn` is the same file as `yarn` on
+/// case-insensitive filesystems. The `pnpm` package is allowed to own its own bin, because without
+/// the pnpm feature flag it is installed as a regular global package.
+pub fn is_reserved_bin(bin_name: &str, package_name: &str) -> bool {
+    let reserved = RESERVED_BINS
+        .iter()
+        .any(|name| name.eq_ignore_ascii_case(bin_name));
+
+    reserved && !(bin_name == "pnpm" && package_name == "pnpm")
+}
+
 pub fn regenerate_shims_for_dir(dir: &Path) -> Fallible<()> {
     // Acquire a lock on the Volta directory, if possible, to prevent concurrent changes
     let _lock = VoltaLock::acquire();
@@ -209,8 +235,31 @@ volta run "$(basename $0)" "$@""#;
 
 #[cfg(all(test, unix))]
 mod tests {
-    use super::get_shim_list_deduped;
+    use super::{get_shim_list_deduped, is_reserved_bin};
     use std::os::unix::fs::symlink;
+
+    #[test]
+    fn reserved_bins_are_rejected_for_other_packages() {
+        for bin in ["node", "npm", "npx", "pnpm", "yarn", "yarnpkg", "volta"] {
+            assert!(is_reserved_bin(bin, "corepack"), "{bin} should be reserved");
+        }
+        assert!(is_reserved_bin("volta-shim", "corepack"));
+        assert!(is_reserved_bin("volta-migrate", "corepack"));
+        assert!(is_reserved_bin("Yarn", "corepack"));
+    }
+
+    #[test]
+    fn unreserved_bins_are_allowed() {
+        assert!(!is_reserved_bin("corepack", "corepack"));
+        assert!(!is_reserved_bin("cowsay", "cowsay"));
+        assert!(!is_reserved_bin("yarn-deduplicate", "yarn-deduplicate"));
+    }
+
+    #[test]
+    fn pnpm_package_can_own_its_bin() {
+        assert!(!is_reserved_bin("pnpm", "pnpm"));
+        assert!(is_reserved_bin("yarn", "pnpm"));
+    }
 
     #[test]
     fn shim_list_keeps_full_name_of_dotted_shims() {

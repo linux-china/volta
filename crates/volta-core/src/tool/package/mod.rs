@@ -57,6 +57,8 @@ impl Package {
         let manifest =
             configure::parse_manifest(&self.name, self.staging.path().to_owned(), manager)?;
 
+        // Validate before persisting, so that a rejected install leaves any existing image intact
+        configure::validate_bins(&self.name, &manifest)?;
         persist_install(&self.name, &self.version, self.staging.path())?;
         link_package_to_shared_dir(&self.name, manager)?;
         configure::write_config_and_shims(&self.name, &manifest, image, manager)?;
@@ -182,6 +184,7 @@ impl DirectInstall {
         let name = package_name.ok_or(ErrorKind::InstalledPackageNameError)?;
         let manifest = configure::parse_manifest(&name, staging.path().to_owned(), manager)?;
 
+        configure::validate_bins(&name, &manifest)?;
         persist_install(&name, &manifest.version, staging.path())?;
         link_package_to_shared_dir(&name, manager)?;
         configure::write_config_and_shims(&name, &manifest, image, manager)
@@ -238,6 +241,7 @@ impl InPlaceUpgrade {
     pub fn complete_upgrade(self, image: &Image) -> Fallible<()> {
         let manifest = configure::parse_manifest(&self.package, self.directory, self.manager)?;
 
+        configure::validate_bins(&self.package, &manifest)?;
         link_package_to_shared_dir(&self.package, self.manager)?;
         configure::write_config_and_shims(&self.package, &manifest, image, self.manager)
     }

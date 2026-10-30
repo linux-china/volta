@@ -63,8 +63,13 @@ pub fn uninstall(name: &str) -> Fallible<()> {
 }
 
 /// Remove a shim and its associated configuration file
+///
+/// Packages installed before reserved names were rejected may still claim a reserved bin. The
+/// shim for such a bin belongs to Volta, so only the configuration file is removed.
 fn remove_config_and_shim(bin_name: &str, pkg_name: &str) -> Fallible<()> {
-    shim::delete(bin_name)?;
+    if !shim::is_reserved_bin(bin_name, pkg_name) {
+        shim::delete(bin_name)?;
+    }
     let config_file = volta_home()?.default_tool_bin_config(bin_name);
     remove_file_if_exists(config_file)?;
     info!(

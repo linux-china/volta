@@ -27,8 +27,6 @@ pub(super) fn write_config_and_shims(
     image: &Image,
     manager: PackageManager,
 ) -> Fallible<()> {
-    validate_bins(name, manifest)?;
-
     let platform = PlatformSpec {
         node: image.node.value.clone(),
         npm: image.npm.clone().map(|s| s.value),
@@ -64,11 +62,19 @@ pub(super) fn write_config_and_shims(
     Ok(())
 }
 
-/// Validate that we aren't attempting to install a bin that is already installed by
-/// another package.
-fn validate_bins(package_name: &str, manifest: &PackageManifest) -> Fallible<()> {
+/// Validate that we aren't attempting to install a bin that is reserved by Volta or that is
+/// already installed by another package.
+pub(super) fn validate_bins(package_name: &str, manifest: &PackageManifest) -> Fallible<()> {
     let home = volta_home()?;
     for bin_name in &manifest.bin {
+        if shim::is_reserved_bin(bin_name, package_name) {
+            return Err(ErrorKind::ReservedBinName {
+                bin_name: bin_name.into(),
+                package: package_name.into(),
+            }
+            .into());
+        }
+
         // Check for name conflicts with already-installed bins
         // Some packages may install bins with the same name
         if let Ok(config) = BinConfig::from_file(home.default_tool_bin_config(bin_name)) {
