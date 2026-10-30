@@ -55,7 +55,7 @@ pub(crate) struct Run {
 }
 
 impl Command for Run {
-    fn run(self, session: &mut Session) -> Fallible<ExitCode> {
+    fn run(self, session: &mut Session) -> Result<ExitCode, Error> {
         session.add_event_start(ActivityKind::Run);
 
         let envs = self.parse_envs();
@@ -74,7 +74,7 @@ impl Command for Run {
             }
             Err(Error::Tool(code)) => {
                 session.add_event_tool_end(ActivityKind::Run, code);
-                Ok(ExitCode::ExecutionFailure)
+                Err(Error::Tool(code))
             }
             Err(Error::Volta(err)) => {
                 report_error(env!("CARGO_PKG_VERSION"), &err);

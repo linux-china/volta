@@ -5,7 +5,7 @@ use clap_complete::Shell;
 use log::info;
 
 use volta_core::{
-    error::{Context, ErrorKind, ExitCode, Fallible},
+    error::{Context, ErrorKind, ExitCode},
     session::{ActivityKind, Session},
     style::{note_prefix, success_prefix},
 };
@@ -28,7 +28,7 @@ pub(crate) struct Completions {
 }
 
 impl Command for Completions {
-    fn run(self, session: &mut Session) -> Fallible<ExitCode> {
+    fn run(self, session: &mut Session) -> Result<ExitCode, crate::common::Error> {
         session.add_event_start(ActivityKind::Completions);
 
         let mut app = crate::cli::Volta::command();

@@ -1,5 +1,5 @@
 use log::info;
-use volta_core::error::{ExitCode, Fallible};
+use volta_core::error::ExitCode;
 use volta_core::layout::volta_home;
 use volta_core::session::{ActivityKind, Session};
 use volta_core::shim::regenerate_shims_for_dir;
@@ -11,7 +11,7 @@ use crate::command::Command;
 pub(crate) struct Setup {}
 
 impl Command for Setup {
-    fn run(self, session: &mut Session) -> Fallible<ExitCode> {
+    fn run(self, session: &mut Session) -> Result<ExitCode, crate::common::Error> {
         session.add_event_start(ActivityKind::Setup);
 
         os::setup_environment()?;

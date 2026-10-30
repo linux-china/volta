@@ -3,7 +3,7 @@ use std::ffi::OsString;
 
 use which::which_in;
 
-use volta_core::error::{Context, ErrorKind, ExitCode, Fallible};
+use volta_core::error::{Context, ErrorKind, ExitCode};
 use volta_core::platform::{Platform, System};
 use volta_core::run::binary::DefaultBinary;
 use volta_core::session::{ActivityKind, Session};
@@ -21,7 +21,7 @@ impl Command for Which {
     //    as a user default. If so, we're done.
     // 2. Otherwise, use the platform image and/or the system environment to
     //    determine a lookup path to run `which` in.
-    fn run(self, session: &mut Session) -> Fallible<ExitCode> {
+    fn run(self, session: &mut Session) -> Result<ExitCode, crate::common::Error> {
         session.add_event_start(ActivityKind::Which);
 
         let default_tool = DefaultBinary::from_name(&self.binary, session)?;

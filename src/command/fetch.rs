@@ -1,4 +1,4 @@
-use volta_core::error::{ExitCode, Fallible};
+use volta_core::error::ExitCode;
 use volta_core::session::{ActivityKind, Session};
 use volta_core::tool;
 
@@ -12,7 +12,7 @@ pub(crate) struct Fetch {
 }
 
 impl Command for Fetch {
-    fn run(self, session: &mut Session) -> Fallible<ExitCode> {
+    fn run(self, session: &mut Session) -> Result<ExitCode, crate::common::Error> {
         session.add_event_start(ActivityKind::Fetch);
 
         for tool in tool::Spec::from_strings(&self.tools, "fetch")? {

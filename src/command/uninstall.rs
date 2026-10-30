@@ -1,4 +1,4 @@
-use volta_core::error::{ErrorKind, ExitCode, Fallible};
+use volta_core::error::{ErrorKind, ExitCode};
 use volta_core::session::{ActivityKind, Session};
 use volta_core::tool;
 use volta_core::version::VersionSpec;
@@ -12,7 +12,7 @@ pub(crate) struct Uninstall {
 }
 
 impl Command for Uninstall {
-    fn run(self, session: &mut Session) -> Fallible<ExitCode> {
+    fn run(self, session: &mut Session) -> Result<ExitCode, crate::common::Error> {
         session.add_event_start(ActivityKind::Uninstall);
 
         let tool = tool::Spec::try_from_str(&self.tool)?;

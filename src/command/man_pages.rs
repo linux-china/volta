@@ -5,7 +5,7 @@ use clap_mangen::Man;
 use log::info;
 
 use volta_core::{
-    error::{Context, ErrorKind, ExitCode, Fallible},
+    error::{Context, ErrorKind, ExitCode},
     session::{ActivityKind, Session},
     style::{note_prefix, success_prefix},
 };
@@ -24,7 +24,7 @@ pub(crate) struct ManPages {
 }
 
 impl Command for ManPages {
-    fn run(self, session: &mut Session) -> Fallible<ExitCode> {
+    fn run(self, session: &mut Session) -> Result<ExitCode, crate::common::Error> {
         session.add_event_start(ActivityKind::ManPages);
 
         let app = crate::cli::Volta::command();

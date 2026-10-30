@@ -35,7 +35,7 @@ pub fn main() {
     let mut session = Session::init();
     session.add_event_start(ActivityKind::Volta);
 
-    let result = ensure_layout().and_then(|()| volta.run(&mut session).map_err(Error::Volta));
+    let result = ensure_layout().and_then(|()| volta.run(&mut session));
     match result {
         Ok(exit_code) => {
             session.add_event_end(ActivityKind::Volta, exit_code);

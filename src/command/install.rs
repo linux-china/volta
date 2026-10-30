@@ -1,4 +1,4 @@
-use volta_core::error::{ExitCode, Fallible};
+use volta_core::error::ExitCode;
 use volta_core::session::{ActivityKind, Session};
 use volta_core::tool::Spec;
 
@@ -12,7 +12,7 @@ pub(crate) struct Install {
 }
 
 impl Command for Install {
-    fn run(self, session: &mut Session) -> Fallible<ExitCode> {
+    fn run(self, session: &mut Session) -> Result<ExitCode, crate::common::Error> {
         session.add_event_start(ActivityKind::Install);
 
         for tool in Spec::from_strings(&self.tools, "install")? {

@@ -261,7 +261,7 @@ impl List {
 }
 
 impl Command for List {
-    fn run(self, session: &mut Session) -> Fallible<ExitCode> {
+    fn run(self, session: &mut Session) -> Result<ExitCode, crate::common::Error> {
         session.add_event_start(ActivityKind::List);
 
         let project = session.project()?;

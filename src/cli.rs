@@ -1,7 +1,7 @@
 use clap::{builder::styling, ColorChoice, Parser};
 
 use crate::command::{self, Command};
-use volta_core::error::{ExitCode, Fallible};
+use volta_core::error::ExitCode;
 use volta_core::session::Session;
 use volta_core::style::{text_width, MAX_WIDTH};
 
@@ -44,7 +44,7 @@ pub(crate) struct Volta {
 }
 
 impl Volta {
-    pub(crate) fn run(self, session: &mut Session) -> Fallible<ExitCode> {
+    pub(crate) fn run(self, session: &mut Session) -> Result<ExitCode, crate::common::Error> {
         if self.version {
             // suffix indicator for dev build
             if cfg!(debug_assertions) {
@@ -107,7 +107,7 @@ pub(crate) enum Subcommand {
 }
 
 impl Subcommand {
-    pub(crate) fn run(self, session: &mut Session) -> Fallible<ExitCode> {
+    pub(crate) fn run(self, session: &mut Session) -> Result<ExitCode, crate::common::Error> {
         match self {
             Subcommand::Fetch(fetch) => fetch.run(session),
             Subcommand::Install(install) => install.run(session),

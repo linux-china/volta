@@ -8,6 +8,18 @@ pub enum Error {
     Tool(i32),
 }
 
+impl From<VoltaError> for Error {
+    fn from(err: VoltaError) -> Self {
+        Error::Volta(err)
+    }
+}
+
+impl From<ErrorKind> for Error {
+    fn from(kind: ErrorKind) -> Self {
+        Error::Volta(kind.into())
+    }
+}
+
 pub fn ensure_layout() -> Result<(), Error> {
     let home = volta_home().map_err(Error::Volta)?;
 

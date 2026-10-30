@@ -22,13 +22,13 @@ pub(crate) use run::Run;
 pub(crate) use setup::Setup;
 pub(crate) use uninstall::Uninstall;
 
-use volta_core::error::{ExitCode, Fallible};
+use volta_core::error::ExitCode;
 use volta_core::session::Session;
 
 /// A Volta command.
 pub(crate) trait Command: Sized {
-    /// Executes the command. Returns `Ok(true)` if the process should return 0,
-    /// `Ok(false)` if the process should return 1, and `Err(e)` if the process
-    /// should return `e.exit_code()`.
-    fn run(self, session: &mut Session) -> Fallible<ExitCode>;
+    /// Executes the command. Returns `Ok(code)` if the process should return `code`,
+    /// `Err(Error::Volta(e))` if the process should report `e` and return `e.exit_code()`,
+    /// and `Err(Error::Tool(code))` if the process should return the exit code of a tool.
+    fn run(self, session: &mut Session) -> Result<ExitCode, crate::common::Error>;
 }

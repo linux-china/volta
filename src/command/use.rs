@@ -1,5 +1,5 @@
 use crate::command::Command;
-use volta_core::error::{ErrorKind, ExitCode, Fallible};
+use volta_core::error::{ErrorKind, ExitCode};
 use volta_core::session::{ActivityKind, Session};
 
 // NOTE: These use the same text as the `long_about` in crate::cli.
@@ -23,7 +23,7 @@ pub(crate) struct Use {
 }
 
 impl Command for Use {
-    fn run(self, session: &mut Session) -> Fallible<ExitCode> {
+    fn run(self, session: &mut Session) -> Result<ExitCode, crate::common::Error> {
         session.add_event_start(ActivityKind::Help);
         let result = Err(ErrorKind::DeprecatedCommandError {
             command: "use".to_string(),
