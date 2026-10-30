@@ -15,6 +15,7 @@ use crate::platform::PlatformSpec;
 use crate::tool::BinConfig;
 use chain_map::ChainMap;
 use indexmap::IndexSet;
+use log::warn;
 
 mod serial;
 #[cfg(test)]
@@ -52,6 +53,7 @@ pub struct Project {
     workspace_manifests: IndexSet<PathBuf>,
     dependencies: ChainMap<String, String>,
     platform: Option<PlatformSpec>,
+    node_from_dot_file: bool,
 }
 
 impl Project {
@@ -109,9 +111,25 @@ impl Project {
             extends = manifest.extends;
         }
 
-        let platform = match platform.map(TryInto::try_into).transpose()? {
-            Some(platform) => Some(platform),
-            None => Self::platform_from_node_version(&manifest_file)?,
+        let dot_node = if platform.as_ref().is_none_or(|p| p.node.is_none()) {
+            Self::node_from_dot_file(&manifest_file)?
+        } else {
+            None
+        };
+        let node_from_dot_file = dot_node.is_some();
+
+        let platform = match (platform, dot_node) {
+            (Some(partial), node @ Some(_)) => {
+                Some(PartialPlatform { node, ..partial }.try_into()?)
+            }
+            (Some(partial), None) => Some(partial.try_into()?),
+            (None, Some(node)) => Some(PlatformSpec {
+                node,
+                yarn: None,
+                npm: None,
+                pnpm: None,
+            }),
+            (None, None) => None,
         };
 
         Ok(Project {
@@ -119,13 +137,14 @@ impl Project {
             workspace_manifests,
             dependencies,
             platform,
+            node_from_dot_file,
         })
     }
 
-    /// Returns a Node.js version from .node-version file
-    fn platform_from_node_version(
-        manifest_file: &Path,
-    ) -> Result<Option<PlatformSpec>, VoltaError> {
+    /// Returns the Node.js version from the .node-version file
+    ///
+    /// Anything other than an exact version (e.g. `20` or `lts/*`) is ignored with a warning
+    fn node_from_dot_file(manifest_file: &Path) -> Fallible<Option<Version>> {
         // Project path (without package.json)
         let project_path = match manifest_file.parent() {
             Some(path) => path,
@@ -148,16 +167,15 @@ impl Project {
             .unwrap_or(version_content.trim());
 
         match Version::parse(version) {
-            Ok(node) => Ok(Some(PlatformSpec {
-                node,
-                yarn: None,
-                npm: None,
-                pnpm: None,
-            })),
-            Err(_) => Err(ErrorKind::DotNodeVersionMalformed {
-                file: version_file_path.clone(),
+            Ok(node) => Ok(Some(node)),
+            Err(_) => {
+                warn!(
+                    "Ignoring {}: '{}' is not an exact Node version",
+                    version_file_path.display(),
+                    version_content.trim()
+                );
+                Ok(None)
             }
-            .into()),
         }
     }
 
@@ -224,9 +242,23 @@ impl Project {
             })
     }
 
+    /// Writes a Node version that came from .node-version into this project's manifest file
+    ///
+    /// Pinning another tool records the toolchain in the manifest, so the Node version it was
+    /// selected against has to be recorded there as well.
+    fn pin_node_from_dot_file(&mut self) -> Fallible<()> {
+        if let (true, Some(platform)) = (self.node_from_dot_file, self.platform.as_ref()) {
+            update_manifest(&self.manifest_file, ManifestKey::Node, Some(&platform.node))?;
+            self.node_from_dot_file = false;
+        }
+
+        Ok(())
+    }
+
     /// Pins the Node version in this project's manifest file
     pub fn pin_node(&mut self, version: Version) -> Fallible<()> {
         update_manifest(&self.manifest_file, ManifestKey::Node, Some(&version))?;
+        self.node_from_dot_file = false;
 
         if let Some(platform) = self.platform.as_mut() {
             platform.node = version;
@@ -244,6 +276,10 @@ impl Project {
 
     /// Pins the npm version in this project's manifest file
     pub fn pin_npm(&mut self, version: Option<Version>) -> Fallible<()> {
+        if version.is_some() {
+            self.pin_node_from_dot_file()?;
+        }
+
         if let Some(platform) = self.platform.as_mut() {
             update_manifest(&self.manifest_file, ManifestKey::Npm, version.as_ref())?;
 
@@ -257,6 +293,10 @@ impl Project {
 
     /// Pins the pnpm version in this project's manifest file
     pub fn pin_pnpm(&mut self, version: Option<Version>) -> Fallible<()> {
+        if version.is_some() {
+            self.pin_node_from_dot_file()?;
+        }
+
         if let Some(platform) = self.platform.as_mut() {
             update_manifest(&self.manifest_file, ManifestKey::Pnpm, version.as_ref())?;
 
@@ -273,6 +313,10 @@ impl Project {
 
     /// Pins the Yarn version in this project's manifest file
     pub fn pin_yarn(&mut self, version: Option<Version>) -> Fallible<()> {
+        if version.is_some() {
+            self.pin_node_from_dot_file()?;
+        }
+
         if let Some(platform) = self.platform.as_mut() {
             update_manifest(&self.manifest_file, ManifestKey::Yarn, version.as_ref())?;
 

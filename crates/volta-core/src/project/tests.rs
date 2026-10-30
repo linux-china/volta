@@ -117,39 +117,57 @@ mod project {
     }
 
     #[test]
-    fn platform_dot_node_version_malformed() {
+    fn platform_dot_node_version_partial_is_ignored() {
         let project_path = fixture_path(&["dot-node-version", "malformed-dot-node-version"]);
-        let project_error = Project::for_dir(project_path).unwrap_err();
+        let test_project = Project::for_dir(project_path).unwrap().unwrap();
 
-        match project_error.kind() {
-            ErrorKind::DotNodeVersionMalformed { file } => {
-                let expected_path = fixture_path(&[
-                    "dot-node-version",
-                    "malformed-dot-node-version",
-                    ".node-version",
-                ]);
-                assert_eq!(&expected_path, file);
-            }
-            kind => panic!("Wrong error kind: {:?}", kind),
-        }
+        assert!(test_project.platform().is_none());
     }
 
     #[test]
-    fn platform_dot_node_version_empty() {
+    fn platform_dot_node_version_alias_is_ignored() {
+        let project_path = fixture_path(&["dot-node-version", "lts-dot-node-version"]);
+        let test_project = Project::for_dir(project_path).unwrap().unwrap();
+
+        assert!(test_project.platform().is_none());
+    }
+
+    #[test]
+    fn platform_dot_node_version_empty_is_ignored() {
         let project_path = fixture_path(&["dot-node-version", "empty-dot-node-version"]);
+        let test_project = Project::for_dir(project_path).unwrap().unwrap();
+
+        assert!(test_project.platform().is_none());
+    }
+
+    #[test]
+    fn platform_dot_node_version_fills_missing_node() {
+        let project_path = fixture_path(&["dot-node-version", "has-npm-only"]);
+        let test_project = Project::for_dir(project_path).unwrap().unwrap();
+        let platform = test_project.platform().unwrap();
+
+        assert_eq!(platform.node, "6.11.0".parse().unwrap());
+        assert_eq!(platform.npm, Some("10.0.0".parse().unwrap()));
+    }
+
+    #[test]
+    fn platform_dot_node_version_with_extends_only() {
+        let project_path = fixture_path(&["dot-node-version", "has-extends-only"]);
+        let test_project = Project::for_dir(project_path).unwrap().unwrap();
+        let platform = test_project.platform().unwrap();
+
+        assert_eq!(platform.node, "6.11.0".parse().unwrap());
+    }
+
+    #[test]
+    fn platform_missing_node_without_dot_node_version() {
+        let project_path = fixture_path(&["dot-node-version", "has-npm-only-no-file"]);
         let project_error = Project::for_dir(project_path).unwrap_err();
 
-        match project_error.kind() {
-            ErrorKind::DotNodeVersionMalformed { file } => {
-                let expected_path = fixture_path(&[
-                    "dot-node-version",
-                    "empty-dot-node-version",
-                    ".node-version",
-                ]);
-                assert_eq!(&expected_path, file);
-            }
-            kind => panic!("Wrong error kind: {:?}", kind),
-        }
+        assert!(matches!(
+            project_error.kind(),
+            ErrorKind::NoProjectNodeInManifest
+        ));
     }
 
     #[test]
@@ -287,6 +305,102 @@ mod project {
             }
             kind => panic!("Wrong error kind: {:?}", kind),
         }
+    }
+}
+
+mod pin {
+    use std::fs;
+
+    use serde_json::Value;
+    use tempfile::{TempDir, tempdir};
+
+    use super::*;
+
+    fn project_with(manifest: &str, dot_node_version: Option<&str>) -> (TempDir, Project) {
+        let dir = tempdir().unwrap();
+        fs::write(dir.path().join("package.json"), manifest).unwrap();
+        if let Some(version) = dot_node_version {
+            fs::write(dir.path().join(".node-version"), version).unwrap();
+        }
+        let project = Project::for_dir(dir.path().to_owned()).unwrap().unwrap();
+        (dir, project)
+    }
+
+    fn volta_field(dir: &TempDir, key: &str) -> Option<String> {
+        let contents = fs::read_to_string(dir.path().join("package.json")).unwrap();
+        let manifest: Value = serde_json::from_str(&contents).unwrap();
+        manifest["volta"][key].as_str().map(str::to_owned)
+    }
+
+    #[test]
+    fn pin_npm_writes_node_from_dot_node_version() {
+        let (dir, mut project) = project_with("{}", Some("6.11.0"));
+
+        project.pin_npm(Some("10.0.0".parse().unwrap())).unwrap();
+
+        assert_eq!(volta_field(&dir, "node").as_deref(), Some("6.11.0"));
+        assert_eq!(volta_field(&dir, "npm").as_deref(), Some("10.0.0"));
+    }
+
+    #[test]
+    fn pin_pnpm_writes_node_from_dot_node_version() {
+        let (dir, mut project) = project_with("{}", Some("6.11.0"));
+
+        project.pin_pnpm(Some("9.0.0".parse().unwrap())).unwrap();
+
+        assert_eq!(volta_field(&dir, "node").as_deref(), Some("6.11.0"));
+    }
+
+    #[test]
+    fn pin_yarn_writes_node_from_dot_node_version() {
+        let (dir, mut project) = project_with("{}", Some("6.11.0"));
+
+        project.pin_yarn(Some("1.22.0".parse().unwrap())).unwrap();
+
+        assert_eq!(volta_field(&dir, "node").as_deref(), Some("6.11.0"));
+    }
+
+    #[test]
+    fn unpin_npm_does_not_write_node_from_dot_node_version() {
+        let (dir, mut project) = project_with("{}", Some("6.11.0"));
+
+        project.pin_npm(None).unwrap();
+
+        assert_eq!(volta_field(&dir, "node"), None);
+    }
+
+    #[test]
+    fn pin_npm_keeps_pinned_node_over_dot_node_version() {
+        let manifest = r#"{"volta": {"node": "6.11.1"}}"#;
+        let (dir, mut project) = project_with(manifest, Some("6.11.0"));
+
+        project.pin_npm(Some("10.0.0".parse().unwrap())).unwrap();
+
+        assert_eq!(volta_field(&dir, "node").as_deref(), Some("6.11.1"));
+    }
+
+    #[test]
+    fn pin_npm_after_pin_node_keeps_new_node() {
+        let (dir, mut project) = project_with("{}", Some("6.11.0"));
+
+        project.pin_node("8.0.0".parse().unwrap()).unwrap();
+        project.pin_npm(Some("10.0.0".parse().unwrap())).unwrap();
+
+        assert_eq!(volta_field(&dir, "node").as_deref(), Some("8.0.0"));
+    }
+
+    #[test]
+    fn pin_npm_does_not_write_node_from_extended_manifest() {
+        let dir = tempdir().unwrap();
+        let root = dir.path().join("root.json");
+        fs::write(&root, r#"{"volta": {"node": "6.11.1"}}"#).unwrap();
+        let manifest = r#"{"volta": {"extends": "./root.json"}}"#;
+        fs::write(dir.path().join("package.json"), manifest).unwrap();
+        let mut project = Project::for_dir(dir.path().to_owned()).unwrap().unwrap();
+
+        project.pin_npm(Some("10.0.0".parse().unwrap())).unwrap();
+
+        assert_eq!(volta_field(&dir, "node"), None);
     }
 }
 
