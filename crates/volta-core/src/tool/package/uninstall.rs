@@ -86,11 +86,10 @@ fn binaries_from_package(package: &str) -> Fallible<Vec<String>> {
 
     dir_entry_match(bin_config_dir, |entry| {
         let path = entry.path();
-        if let Ok(config) = BinConfig::from_file(path) {
-            if config.package == package {
+        if let Ok(config) = BinConfig::from_file(path)
+            && config.package == package {
                 return Some(config.name);
             }
-        }
         None
     })
     .or_else(ok_if_not_found)
@@ -111,11 +110,10 @@ fn remove_shared_link_dir(name: &str) -> Fallible<()> {
     if name.starts_with('@') {
         shared_lib_dir.pop();
 
-        if let Ok(mut entries) = read_dir_eager(&shared_lib_dir) {
-            if entries.next().is_none() {
+        if let Ok(mut entries) = read_dir_eager(&shared_lib_dir)
+            && entries.next().is_none() {
                 remove_dir_if_exists(&shared_lib_dir)?;
             }
-        }
     }
 
     Ok(())

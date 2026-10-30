@@ -37,8 +37,8 @@ impl Command for ManPages {
                 }
 
                 // Create parent directory if it doesn't exist
-                if let Some(parent) = path.parent() {
-                    if !parent.is_dir() {
+                if let Some(parent) = path.parent()
+                    && !parent.is_dir() {
                         info!(
                             "{} {} does not exist, creating it",
                             note_prefix(),
@@ -50,7 +50,6 @@ impl Command for ManPages {
                             }
                         })?;
                     }
-                }
 
                 let mut file = std::fs::File::create(&path).with_context(|| {
                     ErrorKind::ManPagesOutFileError {

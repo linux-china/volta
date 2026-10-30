@@ -173,11 +173,10 @@ impl DirectInstall {
             let args: Vec<String> = std::env::args().collect();
             if let Some(last_item) = args.last() {
                 let mut name_arg = last_item.as_str();
-                if let Some(pos) = last_item.rfind('@') {
-                    if pos != 0 {
+                if let Some(pos) = last_item.rfind('@')
+                    && pos != 0 {
                         name_arg = &last_item[..pos];
                     }
-                }
                 package_name = Some(name_arg.to_string());
             }
         }

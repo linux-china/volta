@@ -384,8 +384,8 @@ impl PackageLinkCommand {
             .into());
         }
 
-        if let Some(platform) = session.project_platform()? {
-            if platform.node.major != config.platform.node.major {
+        if let Some(platform) = session.project_platform()?
+            && platform.node.major != config.platform.node.major {
                 warn!(
                     "the current project is using {}, but package '{}' was linked using {}. These might not interact correctly.",
                     tool_version("node", &platform.node),
@@ -393,7 +393,6 @@ impl PackageLinkCommand {
                     tool_version("node", &config.platform.node)
                 );
             }
-        }
 
         Ok(())
     }

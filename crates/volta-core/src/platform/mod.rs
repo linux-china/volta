@@ -284,11 +284,10 @@ impl Platform {
         // Only force download of the pnpm version if the pnpm feature flag is set. If it isn't,
         // then we won't be using the `Pnpm` tool to execute (we will be relying on the global
         // package logic), so fetching the Pnpm version would only be redundant work.
-        if env::var_os(VOLTA_FEATURE_PNPM).is_some() {
-            if let Some(Sourced { value: version, .. }) = &self.pnpm {
+        if env::var_os(VOLTA_FEATURE_PNPM).is_some()
+            && let Some(Sourced { value: version, .. }) = &self.pnpm {
                 Pnpm::new(version.clone()).ensure_fetched(session)?;
             }
-        }
 
         if let Some(Sourced { value: version, .. }) = &self.yarn {
             Yarn::new(version.clone()).ensure_fetched(session)?;

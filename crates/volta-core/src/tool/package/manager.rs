@@ -126,8 +126,8 @@ impl PackageManager {
             // See: https://github.com/volta-cli/rfcs/pull/46#discussion_r861943740
             let mut new_path = global_bin_dir;
             for (name, value) in command.get_envs() {
-                if name == "PATH" {
-                    if let Some(old_path) = value {
+                if name == "PATH"
+                    && let Some(old_path) = value {
                         #[cfg(unix)]
                         let path_delimiter = OsStr::new(":");
                         #[cfg(windows)]
@@ -136,7 +136,6 @@ impl PackageManager {
                             PathBuf::from([new_path.as_os_str(), old_path].join(path_delimiter));
                         break;
                     }
-                }
             }
             command.env("PATH", new_path);
         }
