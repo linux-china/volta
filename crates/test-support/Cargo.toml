@@ -5,6 +5,6 @@ authors = ["David Herman <david.herman@gmail.com>"]
 edition = "2024"
 
 [dependencies]
-hamcrest2 = "0.3.0"
+hamcrest2 = "1.0.1"
 serde_json = { version = "1.0.151" }
 thiserror = "2.0.21"
