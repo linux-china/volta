@@ -164,6 +164,7 @@ pub trait DistroFixture: From<DistroMetadata> {
 #[derive(Clone)]
 pub struct DistroMetadata {
     pub version: &'static str,
+    #[allow(dead_code)]
     pub compressed_size: u32,
     pub uncompressed_size: Option<u32>,
 }

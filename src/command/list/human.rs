@@ -845,7 +845,6 @@ See options for more detailed reports by running `volta list --help`.";
     }
 
     mod node {
-        use super::super::*;
         use super::*;
         use crate::command::list::Source;
 
