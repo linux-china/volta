@@ -101,7 +101,7 @@ impl Run {
             (true, _) => InheritOption::None,
             (false, None) => InheritOption::Inherit,
             (false, Some(version)) => match npm::resolve(version.parse()?, session)? {
-                None => InheritOption::Inherit,
+                None => InheritOption::None,
                 Some(npm) => InheritOption::Some(npm),
             },
         };
@@ -148,5 +148,35 @@ impl Run {
                 (Some(key), Some(value)) => Some((key, value)),
             }
         }).collect()
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn run_with_npm(npm: &str) -> Run {
+        Run {
+            node: None,
+            npm: Some(npm.to_string()),
+            bundled_npm: false,
+            pnpm: None,
+            no_pnpm: false,
+            yarn: None,
+            no_yarn: false,
+            envs: Vec::new(),
+            command_and_args: vec![OsString::from("npm")],
+        }
+    }
+
+    #[test]
+    fn npm_bundled_tag_ignores_pinned_npm() {
+        let mut session = Session::init();
+
+        let platform = run_with_npm("bundled")
+            .parse_platform(&mut session)
+            .expect("`bundled` resolves without fetching anything");
+
+        assert!(matches!(platform.npm, InheritOption::None));
     }
 }
