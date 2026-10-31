@@ -274,6 +274,7 @@ install_release() {
     fi
 
     install_from_file "$download_archive" "$install_dir"
+    rm -rf "$download_archive"
   else
     # existing legacy install, or upgrade problem
     return 1
