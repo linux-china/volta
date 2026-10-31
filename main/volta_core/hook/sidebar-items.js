@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["Publish","RegistryFormat"],"macro":[["merge_hooks",1]],"mod":["serial","tool"],"struct":["EventHooks","HookConfig","LazyHookConfig","ToolHooks","YarnHooks"]};
