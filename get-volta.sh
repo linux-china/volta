@@ -21,6 +21,9 @@ download_release_from_repo() {
   local os_info="$2"
   local tmpdir="$3"
   local arch_info="$(uname -m)"
+  if [ "$arch_info" == "aarch64" ]; then
+    arch_info="arm64"
+  fi
 
   local filename="volta-$version-$os_info-$arch_info.tar.gz"
   local download_file="$tmpdir/$filename"
@@ -133,7 +136,7 @@ parse_os_info() {
       if [ "$arch" == "x86_64" ]; then
         echo "linux"
       elif [ "$arch" == "aarch64" ]; then
-        echo "linux-arm"
+        echo "linux"
       else
         error "Releases for architectures other than x64 and arm are not currently supported."
         return 1
