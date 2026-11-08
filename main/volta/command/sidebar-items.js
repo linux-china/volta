@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"mod":["completions","fetch","install","list","man_pages","pin","run","setup","uninstall","use","which"],"trait":["Command"]};

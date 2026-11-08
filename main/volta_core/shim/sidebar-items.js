@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":["RESERVED_BINS"],"enum":["ShimResult"],"fn":["create","delete","get_shim_list_deduped","is_reserved_bin","regenerate_shims_for_dir"],"mod":["platform"]};
