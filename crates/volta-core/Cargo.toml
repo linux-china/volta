@@ -28,7 +28,7 @@ tempfile = "3.27.0"
 os_info = "3.15.0"
 detect-indent = "0.1.0"
 envoy = "0.1.3"
-regex = "1.13.1"
+regex = "1.13.2"
 dirs = "7.0.0"
 # We manually configure the feature list here because 0.4.16 includes the
 # `oldtime` feature by default to avoid a breaking change. Additionally, using
@@ -37,8 +37,8 @@ dirs = "7.0.0"
 chrono = { version = "0.4.45", default-features = false, features = ["alloc", "std", "clock"] }
 validate-npm-package-name = { path = "../validate-npm-package-name" }
 textwrap = "0.16.4"
-log = { version = "0.4.34", features = ["std"] }
-ctrlc = "3.5.2"
+log = { version = "0.4.35", features = ["std"] }
+ctrlc = "3.5.3"
 walkdir = "2.5.0"
 volta-layout = { path = "../volta-layout" }
 once_cell = "1.21.4"
